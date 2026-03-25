@@ -39,23 +39,21 @@ function preload() {
 }
 
 function create() {
-    this.physics.world.setBounds(0, 0, 4000, 600);
+    // VERY LONG WORLD
+    this.physics.world.setBounds(0, 0, 20000, 600);
 
     platforms = this.physics.add.staticGroup();
 
-    for (let i = 0; i < 4000; i += 400) {
+    // Ground across entire world
+    for (let i = 0; i < 20000; i += 400) {
         platforms.create(i, 580, 'ground').setScale(2).refreshBody();
     }
 
-    platforms.create(600, 450, 'ground');
-    platforms.create(900, 350, 'ground');
-    platforms.create(1200, 300, 'ground');
-    platforms.create(1500, 400, 'ground');
-    platforms.create(1800, 320, 'ground');
-    platforms.create(2200, 280, 'ground');
-    platforms.create(2600, 350, 'ground');
-    platforms.create(3000, 300, 'ground');
-    platforms.create(3400, 420, 'ground');
+    // Random platforms
+    for (let i = 400; i < 20000; i += 300) {
+        let height = Phaser.Math.Between(250, 450);
+        platforms.create(i, height, 'ground');
+    }
 
     player = this.physics.add.sprite(100, 450, 'player');
     player.setBounce(0.2);
@@ -67,15 +65,13 @@ function create() {
 
     cursors = this.input.keyboard.createCursorKeys();
 
-    coins = this.physics.add.group({
-        key: 'coin',
-        repeat: 20,
-        setXY: { x: 200, y: 0, stepX: 150 }
-    });
+    // Coins everywhere
+    coins = this.physics.add.group();
 
-    coins.children.iterate(function (child) {
-        child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
-    });
+    for (let i = 200; i < 20000; i += 200) {
+        let coin = coins.create(i, Phaser.Math.Between(100, 400), 'coin');
+        coin.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
+    }
 
     this.physics.add.collider(coins, platforms);
     this.physics.add.overlap(player, coins, collectCoin, null, this);
@@ -83,7 +79,7 @@ function create() {
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', fill: '#fff' });
     scoreText.setScrollFactor(0);
 
-    this.cameras.main.setBounds(0, 0, 4000, 600);
+    this.cameras.main.setBounds(0, 0, 20000, 600);
     this.cameras.main.startFollow(player);
 }
 
