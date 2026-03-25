@@ -38,11 +38,21 @@ function preload() {
 }
 
 function create() {
+    // WORLD SIZE (important for scrolling)
+    this.physics.world.setBounds(0, 0, 2000, 600);
+
     platforms = this.physics.add.staticGroup();
-    platforms.create(400, 580, 'ground').setScale(2).refreshBody();
+
+    // Ground
+    for (let i = 0; i < 2000; i += 400) {
+        platforms.create(i, 580, 'ground').setScale(2).refreshBody();
+    }
+
+    // Floating platforms
     platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
+    platforms.create(900, 300, 'ground');
+    platforms.create(1300, 350, 'ground');
+    platforms.create(1600, 250, 'ground');
 
     player = this.physics.add.sprite(100, 450, 'player');
     player.setBounce(0.2);
@@ -52,10 +62,11 @@ function create() {
 
     cursors = this.input.keyboard.createCursorKeys();
 
+    // Coins
     coins = this.physics.add.group({
         key: 'coin',
-        repeat: 5,
-        setXY: { x: 12, y: 0, stepX: 120 }
+        repeat: 10,
+        setXY: { x: 200, y: 0, stepX: 150 }
     });
 
     coins.children.iterate(function (child) {
@@ -65,7 +76,12 @@ function create() {
     this.physics.add.collider(coins, platforms);
     this.physics.add.overlap(player, coins, collectCoin, null, this);
 
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', fill: '#000' });
+    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', fill: '#fff' });
+    scoreText.setScrollFactor(0);
+
+    // CAMERA FOLLOW PLAYER (side scrolling)
+    this.cameras.main.setBounds(0, 0, 2000, 600);
+    this.cameras.main.startFollow(player);
 }
 
 function collectCoin(player, coin) {
